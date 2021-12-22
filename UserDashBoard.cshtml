@@ -1,0 +1,180 @@
+﻿
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8' />
+    @*<link href="~/fullcalendar/main.css" rel="stylesheet" />
+    <script src="~/fullcalendar/main.js"></script>*@
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.1.0/fullcalendar.js'></script>
+    <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.1.0/fullcalendar.min.css" />
+    <script>
+        $(document).ready(function ($) {
+            $("#calendar").fullCalendar({
+                headerToolbar: {
+                    left: 'prevYear,prev,next,nextYear today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                },
+                dayClick: function (event) {
+                    $("#myModalSave").modal("show");
+                },
+                selectable: true,
+                navLinks: true, // can click day/week names to navigate views
+                editable: true,
+                events: [
+                        {
+                            title: 'All Day Event',
+                            start: '2021-12-13',
+                            start: '2021-12-13T16:00:00',
+                            end: '2021-12-14'
+                        },
+                        {
+                            title: 'Click for Google',
+                            url: 'http://google.com/',
+                            start: '2021-12-28'
+                        }
+                    ]
+            })
+        });
+
+            //document.addEventListener('DOMContentLoaded', function () {
+            //    var selectedEvent = null;
+            //    var calendarEl = document.getElementById('calendar');
+
+            //    var calendar = new FullCalendar.Calendar(calendarEl, {
+            //        headerToolbar: {
+            //            left: 'prevYear,prev,next,nextYear today',
+            //            center: 'title',
+            //            right: 'dayGridMonth,dayGridWeek,dayGridDay'
+            //        },
+            //        eventClick: function (event, jsEvent, view) {
+            //            $("myModalSave").modal();
+            //        },
+            //        selectable: true,
+            //        navLinks: true, // can click day/week names to navigate views
+            //        editable: true,
+            //        dayMaxEvents: true, // allow "more" link when too many events
+            //        events: [
+            //            {
+            //                title: 'All Day Event',
+            //                start: '2021-12-13',
+            //                start: '2021-12-13T16:00:00',
+            //                end: '2021-12-14'
+            //            },
+            //            {
+            //                title: 'Click for Google',
+            //                url: 'http://google.com/',
+            //                start: '2021-12-28'
+            //            }
+            //        ]
+            //    });
+
+            //    calendar.render();
+            //});
+
+    </script>
+    <style>
+        #calendar {
+            height: 450px;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        @if (Session["UserName"] != null)
+        {
+            <div class="panel pull-right">
+                Welcome @Session["UserName"].ToString()
+                @Html.ActionLink("Log Out", "Login", "Employee")
+            </div>
+        }
+    </div>
+    <div id='calendar'></div>
+
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>                    
+                    <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                        <span class="glyphicon glyphicon-remove"></span> Remove
+                    </button>
+                    <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                        <span class="glyphicon glyphicon-pencil"></span> Edit
+                    </button>
+                    <p id="pDetails"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="myModalSave" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Save Event</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="col-md-12 form-horizontal">
+                        <input type="hidden" id="hdEventID" value="0" />                       
+                        <div class="form-group">
+                            <label>Start</label>
+                            <div class="input-group date" id="dtp1" style="width:280px">
+                                <input type="text" id="txtStart" class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                                <select id="timeDropdownlist" class="form-control Setddltime">
+                                    <option value="0">--select--</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="divEndDate">
+                            <label>End</label>
+                            <div class="input-group date" id="dtp2" style="width:280px;">
+                                <input type="text" id="txtEnd" class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                                <select id="timeDropdownlist1" class="form-control Setddltime">
+                                    <option value="0">--select--</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Booking For</label>
+                            <select id="ddlBookingFor" class="form-control">                               
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="txtDescription" rows="2" class="form-control"></textarea>
+                        </div>
+
+                        <div class="form-group" style="display:none">
+                            <label>Select Metting Room</label>
+                            <select id="ddMeetingRoom" class="form-control"></select>
+                        </div>
+                        <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
